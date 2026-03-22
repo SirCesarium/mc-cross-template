@@ -64,6 +64,24 @@ org.gradle.configuration-cache=false
 "@
 
 $Content | Out-File -FilePath "gradle.properties" -Encoding utf8
+
+$OrgPath = $MavenGrp.Replace('.', '/')
+foreach ($platform in @("fabric", "neoforge", "paper")) {
+    $SrcDir = "$platform/src/main/java"
+    $OldPath = Join-Path $SrcDir "com/example"
+    $NewPath = Join-Path $SrcDir $OrgPath
+    
+    if (Test-Path $OldPath) {
+        New-Item -ItemType Directory -Force -Path $NewPath | Out-Null
+        Copy-Item -Path "$OldPath\*" -Destination $NewPath -Recurse -Force
+        Remove-Item -Path $OldPath -Recurse -Force
+        
+        Get-ChildItem -Path $NewPath -Filter "*.java" -Recurse | ForEach-Object {
+            (Get-Content $_.FullName) -replace 'package com.example', "package $MavenGrp" | Set-Content $_.FullName
+        }
+    }
+}
+
 Remove-Item "..\\$TmpZip"
 
 Write-Host "SUCCESS: Project '$ArchName' is ready in .\$ArchName" -ForegroundColor Green

@@ -77,6 +77,19 @@ org.gradle.parallel=true
 org.gradle.configuration-cache=false
 EOF
 
+ORG_PATH=$(echo $MAVEN_GRP | tr '.' '/')
+for platform in fabric neoforge paper; do
+  SRC_DIR="$platform/src/main/java"
+  OLD_PATH="$SRC_DIR/com/example"
+  NEW_PATH="$SRC_DIR/$ORG_PATH"
+
+  mkdir -p "$NEW_PATH"
+  cp -r "$OLD_PATH/"* "$NEW_PATH/"
+  rm -rf "$OLD_PATH"
+
+  find "$NEW_PATH" -name "*.java" -exec sed -i "s/package com.example/package $MAVEN_GRP/g" {} +
+done
+
 rm "../$TMP_ZIP"
 echo "------------------------------------------------"
 echo "SUCCESS: Project '$ARCH_NAME' is ready in ./$ARCH_NAME"
