@@ -6,17 +6,23 @@ $TmpZip = "template.zip"
 $TmpDir = "mc-cross-template-main"
 
 # --- Metadata Collection ---
-$ArchName = Read-Host "Enter Project ID (lowercase, no spaces, e.g. my_cool_mod)"
+$ArchName = Read-Host "Enter Project ID [my_mod]"
+if ([string]::IsNullOrWhiteSpace($ArchName)) { $ArchName = "my_mod" }
 if ($ArchName -notmatch "^[a-z0-9_]+$") { throw "Invalid ID format." }
 
-$ModName = Read-Host "Enter Display Name (e.g. My Mod)"
+$ModName = Read-Host "Enter Display Name [My Mod]"
+if ([string]::IsNullOrWhiteSpace($ModName)) { $ModName = "My Mod" }
 if ([string]::IsNullOrWhiteSpace($ModName)) { throw "Name cannot be empty." }
 
-$ModVer = Read-Host "Enter Version (e.g. 1.0.0)"
+$ModVer = Read-Host "Enter Version [1.0.0]"
+if ([string]::IsNullOrWhiteSpace($ModVer)) { $ModVer = "1.0.0" }
 if ($ModVer -notmatch "^\d+\.\d+\.\d+$") { throw "Use SemVer format (x.y.z)." }
 
-$ModAuth = Read-Host "Enter Author Name"
-$MavenGrp = Read-Host "Enter Maven Group (e.g. com.example)"
+$ModAuth = Read-Host "Enter Author Name [Author]"
+if ([string]::IsNullOrWhiteSpace($ModAuth)) { $ModAuth = "Author" }
+
+$MavenGrp = Read-Host "Enter Maven Group [com.example]"
+if ([string]::IsNullOrWhiteSpace($MavenGrp)) { $MavenGrp = "com.example" }
 if ($MavenGrp -notmatch "^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$") { throw "Invalid Maven Group." }
 
 # --- Execution ---

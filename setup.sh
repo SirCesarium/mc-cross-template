@@ -13,18 +13,23 @@ die() {
 }
 
 # --- Metadata Collection ---
-read -p "Enter Project ID (lowercase, no spaces): " ARCH_NAME </dev/tty
+read -p "Enter Project ID [my_mod]: " ARCH_NAME </dev/tty
+ARCH_NAME=${ARCH_NAME:-my_mod}
 [[ $ARCH_NAME =~ ^[a-z0-9_]+$ ]] || die "Invalid ID format."
 
-read -p "Enter Display Name: " MOD_NAME </dev/tty
+read -p "Enter Display Name [My Mod]: " MOD_NAME </dev/tty
+MOD_NAME=${MOD_NAME:-My Mod}
 [[ -n "$MOD_NAME" ]] || die "Name cannot be empty."
 
-read -p "Enter Version (e.g. 1.0.0): " MOD_VER </dev/tty
+read -p "Enter Version [1.0.0]: " MOD_VER </dev/tty
+MOD_VER=${MOD_VER:-1.0.0}
 [[ $MOD_VER =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Use SemVer format (x.y.z)."
 
-read -p "Enter Author Name: " MOD_AUTH </dev/tty
+read -p "Enter Author Name [Author]: " MOD_AUTH </dev/tty
+MOD_AUTH=${MOD_AUTH:-Author}
 
-read -p "Enter Maven Group (e.g. com.example): " MAVEN_GRP </dev/tty
+read -p "Enter Maven Group [com.example]: " MAVEN_GRP </dev/tty
+MAVEN_GRP=${MAVEN_GRP:-com.example}
 [[ $MAVEN_GRP =~ ^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$ ]] || die "Invalid Maven Group."
 
 # --- Execution ---
