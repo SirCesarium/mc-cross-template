@@ -3,6 +3,10 @@ plugins {
     id 'io.papermc.paperweight.userdev' version '1.7.1'
 }
 
+base {
+    archivesName = "${project.archives_name}-${project.mod_version}-paper"
+}
+
 dependencies {
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:${project.paper_version}")
     implementation project(':core')

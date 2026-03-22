@@ -2,6 +2,28 @@ plugins {
     id 'java'
 }
 
+tasks.register('buildAll') {
+    group = "build"
+    dependsOn ":fabric:build", ":neoforge:build", ":paper:build"
+
+    doLast {
+        def distDir = file("dist")
+        distDir.mkdirs()
+
+        subprojects.each { sub ->
+            if (sub.name != "core") {
+                def jarTask = sub.tasks.findByName('remapJar') ?: sub.tasks.jar
+                def jarFile = jarTask.archiveFile.get().asFile
+                
+                copy {
+                    from jarFile
+                    into distDir
+                }
+            }
+        }
+    }
+}
+
 subprojects {
     apply plugin: 'java'
 

@@ -2,6 +2,10 @@ plugins {
     id 'fabric-loom' version '1.7-SNAPSHOT'
 }
 
+base {
+    archivesName = "${project.archives_name}-${project.mod_version}-fabric"
+}
+
 dependencies {
     minecraft "net.minecraft:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -9,7 +13,6 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     
     implementation project(':core')
-    include project(':core')
 }
 
 loom {
