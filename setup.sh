@@ -77,8 +77,10 @@ org.gradle.parallel=true
 org.gradle.configuration-cache=false
 EOF
 
+sed -i "s/rootProject.name = 'mc-cross-template'/rootProject.name = '$ARCH_NAME'/g" settings.gradle
+
 ORG_PATH=$(echo $MAVEN_GRP | tr '.' '/')
-for platform in fabric neoforge paper; do
+for platform in core fabric neoforge paper; do
   SRC_DIR="$platform/src/main/java"
   OLD_PATH="$SRC_DIR/com/example"
   NEW_PATH="$SRC_DIR/$ORG_PATH"

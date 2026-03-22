@@ -65,8 +65,10 @@ org.gradle.configuration-cache=false
 
 $Content | Out-File -FilePath "gradle.properties" -Encoding utf8
 
+(Get-Content settings.gradle) -replace "rootProject.name = 'mc-cross-template'", "rootProject.name = '$ArchName'" | Set-Content settings.gradle
+
 $OrgPath = $MavenGrp.Replace('.', '/')
-foreach ($platform in @("fabric", "neoforge", "paper")) {
+foreach ($platform in @("core", "fabric", "neoforge", "paper")) {
     $SrcDir = "$platform/src/main/java"
     $OldPath = Join-Path $SrcDir "com/example"
     $NewPath = Join-Path $SrcDir $OrgPath
