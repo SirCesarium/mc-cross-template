@@ -13,17 +13,18 @@ die() {
 }
 
 # --- Metadata Collection ---
-read -p "Enter Project ID (lowercase, no spaces, e.g. my_cool_mod): " ARCH_NAME
+read -p "Enter Project ID (lowercase, no spaces): " ARCH_NAME </dev/tty
 [[ $ARCH_NAME =~ ^[a-z0-9_]+$ ]] || die "Invalid ID format."
 
-read -p "Enter Display Name (e.g. My Mod): " MOD_NAME
+read -p "Enter Display Name: " MOD_NAME </dev/tty
 [[ -n "$MOD_NAME" ]] || die "Name cannot be empty."
 
-read -p "Enter Version (e.g. 1.0.0): " MOD_VER
+read -p "Enter Version (e.g. 1.0.0): " MOD_VER </dev/tty
 [[ $MOD_VER =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Use SemVer format (x.y.z)."
 
-read -p "Enter Author Name: " MOD_AUTH
-read -p "Enter Maven Group (e.g. com.example): " MAVEN_GRP
+read -p "Enter Author Name: " MOD_AUTH </dev/tty
+
+read -p "Enter Maven Group (e.g. com.example): " MAVEN_GRP </dev/tty
 [[ $MAVEN_GRP =~ ^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$ ]] || die "Invalid Maven Group."
 
 # --- Execution ---
@@ -31,7 +32,14 @@ echo "Downloading template..."
 curl -sSL "$REPO_URL" -o "$TMP_ZIP"
 
 echo "Extracting files..."
-unzip -q "$TMP_ZIP"
+unzip -o -q "$TMP_ZIP"
+
+if [ -d "$ARCH_NAME" ]; then
+  rm -rf "$TMP_DIR"
+  rm "$TMP_ZIP"
+  die "Directory '$ARCH_NAME' already exists. Aborting to avoid overwrite."
+fi
+
 mv "$TMP_DIR" "$ARCH_NAME"
 cd "$ARCH_NAME"
 
@@ -65,4 +73,6 @@ org.gradle.configuration-cache=false
 EOF
 
 rm "../$TMP_ZIP"
+echo "------------------------------------------------"
 echo "SUCCESS: Project '$ARCH_NAME' is ready in ./$ARCH_NAME"
+echo "Next steps: cd $ARCH_NAME && ./gradlew build"
