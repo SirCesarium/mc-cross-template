@@ -1,0 +1,40 @@
+plugins {
+    id 'fabric-loom' version '1.7-SNAPSHOT'
+}
+
+dependencies {
+    minecraft "net.minecraft:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    
+    implementation project(':core')
+    include project(':core')
+}
+
+loom {
+    def runDirName = "../../run/fabric"
+    
+    runs {
+        server {
+            server()
+            runDir = runDirName
+        }
+    }
+}
+
+tasks.register('run') {
+    dependsOn 'runServer'
+}
+
+tasks.named('runServer') {
+    doFirst {
+        def runDir = file("../../run/fabric")
+        runDir.mkdirs()
+        new File(runDir, "eula.txt").text = "eula=true"
+    }
+}
+
+jar {
+    from project(':core').sourceSets.main.output
+}

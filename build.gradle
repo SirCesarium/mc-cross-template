@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+    repositories {
+        mavenCentral()
+    }
+
+    afterEvaluate {
+        def id = project.archives_name
+        def name = project.mod_name
+        def group = project.maven_group
+
+        if (id != id.toLowerCase() || id.contains(" ") || !id.matches("^[a-z0-9_]+\$")) {
+            throw new GradleException("METADATA FAILURE: 'archives_name' must be lowercase, no spaces, and [a-z0-9_]. Found: '${id}'")
+        }
+
+        if (name.contains(" ") || !name.matches("^[a-zA-Z0-9_]+\$")) {
+             throw new GradleException("METADATA FAILURE: 'mod_name' cannot contain spaces or special symbols. Found: '${name}'")
+        }
+
+        if (!group.matches("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*\$")) {
+            throw new GradleException("METADATA FAILURE: 'maven_group' must be a valid Java package name. Found: '${group}'")
+        }
+
+        if (!project.mod_version.matches("^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9.]+)?$")) {
+            throw new GradleException("METADATA FAILURE: 'mod_version' must follow SemVer (e.g., 1.0.0). Found: '${project.mod_version}'")
+        }
+        
+        println "CONFIG: Project ':${project.name}' setup for '${id}'"
+
+        def resourceTargets = [
+            "id": id,
+            "version": project.mod_version,
+            "name": name,
+            "description": project.mod_description,
+            "author": project.mod_author,
+            "apiVersion": project.minecraft_version.split('\\.').take(2).join('.'),
+            "minecraftVersion": project.minecraft_version,
+            "loaderVersion": project.fabric_loader_version,
+            "neoVersion": project.neoforge_version,
+            "group": group
+        ]
+
+        processResources {
+            inputs.properties(resourceTargets)
+
+            filesMatching(["fabric.mod.json", "META-INF/neoforge.mods.toml", "paper-plugin.yml"]) {
+                expand(resourceTargets)
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 21
+    }
+}

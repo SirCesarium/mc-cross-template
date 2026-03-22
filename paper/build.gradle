@@ -1,0 +1,62 @@
+plugins {
+    id 'java-library'
+    id 'io.papermc.paperweight.userdev' version '1.7.1'
+}
+
+dependencies {
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:${project.paper_version}")
+    implementation project(':core')
+}
+
+def mcVersion = project.minecraft_version
+def pBuild = project.paper_build
+def pDir = rootProject.projectDir
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output
+    from project(':core').sourceSets.main.output
+    from {
+        configurations.runtimeClasspath
+            .filter { it.exists() && it.name.endsWith('.jar') }
+            .collect { zipTree(it) }
+    }
+}
+
+tasks.register('copyPlugin', Copy) {
+    dependsOn jar
+    from jar.archiveFile
+    into "${pDir}/run/paper/plugins"
+}
+
+tasks.register('downloadPaper') {
+    def destFile = file("${pDir}/run/paper/server.jar")
+    outputs.file(destFile)
+    
+    doLast {
+        if (!destFile.exists()) {
+            destFile.parentFile.mkdirs()
+            def url = "https://api.papermc.io/v2/projects/paper/versions/${mcVersion}/builds/${pBuild}/downloads/paper-${mcVersion}-${pBuild}.jar"
+            println "Descargando Paper desde: $url"
+            new URL(url).withInputStream { i -> destFile.withOutputStream { it << i } }
+        }
+    }
+}
+
+tasks.register('run', Exec) {
+    dependsOn 'copyPlugin'
+    dependsOn 'downloadPaper'
+    
+    workingDir = file("${pDir}/run/paper")
+    
+    executable = 'java'
+    args = [
+        '-Xmx2G',
+        '-Dcom.mojang.eula.agree=true',
+        '-jar',
+        'server.jar',
+        'nogui'
+    ]
+    
+    standardInput = System.in
+}

@@ -1,0 +1,6 @@
+name: "${name}"
+version: "${version}"
+main: ${group}.paper.PaperEntry
+api-version: "${apiVersion}"
+author: "${author}"
+description: "${description}"

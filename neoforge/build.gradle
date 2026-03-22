@@ -1,0 +1,53 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.140'
+}
+
+neoForge {
+    version = project.neoforge_version
+    runs {
+        server {
+            server()
+            gameDirectory = rootProject.file("run/neoforge") 
+            programArgument '--nogui'
+        }
+    }
+    mods {
+        "${project.archives_name}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+dependencies {
+    implementation project(':core')
+}
+
+def generatedSrcDir = layout.buildDirectory.dir("generated-sources/java")
+
+def processJavaSources = tasks.register('processJavaSources', Copy) {
+    from sourceSets.main.java
+    into generatedSrcDir
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [modId: project.archives_name])
+}
+
+tasks.withType(JavaCompile).configureEach {
+    dependsOn processJavaSources
+    source = processJavaSources.map { it.destinationDir }
+}
+
+tasks.register('run') {
+    dependsOn 'runServer'
+}
+
+tasks.named('runServer') {
+    doFirst {
+        def runDir = rootProject.file("run/neoforge")
+        runDir.mkdirs()
+        new File(runDir, "eula.txt").text = "eula=true"
+    }
+}
+
+jar {
+    from project(':core').sourceSets.main.output
+}

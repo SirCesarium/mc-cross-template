@@ -1,0 +1,45 @@
+# --- Gradle ---
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# --- IDEs (Eclipse, IntelliJ, VS Code) ---
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+bin/
+**/bin/
+*.swp
+*.swo
+
+# --- Minecraft / Run Directories ---
+run/
+**/run/
+*.log
+**/logs/
+**/crash-reports/
+**/usercache.json
+**/whitelist.json
+**/banned-players.json
+**/banned-ips.json
+**/ops.json
+**/server.properties
+**/eula.txt
+**/session.lock
+**/world/
+**/world_nether/
+**/world_the_end/
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+
+# --- Databases & Env ---
+*.db
+*.env
+!*.example.env
