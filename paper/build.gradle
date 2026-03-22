@@ -41,7 +41,7 @@ tasks.register('downloadPaper') {
         if (!destFile.exists()) {
             destFile.parentFile.mkdirs()
             def url = "https://api.papermc.io/v2/projects/paper/versions/${mcVersion}/builds/${pBuild}/downloads/paper-${mcVersion}-${pBuild}.jar"
-            println "Descargando Paper desde: $url"
+            println "Downloading Paper from: $url"
             new URL(url).withInputStream { i -> destFile.withOutputStream { it << i } }
         }
     }
